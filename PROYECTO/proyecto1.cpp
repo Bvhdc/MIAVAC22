@@ -88,9 +88,9 @@ void comandos(char *comando){
             int multiplier=1024*1024;
             time(&nwt.mbr_fecha_creacion);
             nwt.mbr_disk_signature=rand()%100;
-            token=strtok(NULL," >");
+            token=strtok(NULL," =");
             while(token != NULL){
-                if (strcasecmp(token,"-s-")==0)
+                if (strcasecmp(token,"-s")==0)
                 {
                     token=strtok(NULL," ");
                     int s=atoi(token);
@@ -99,9 +99,9 @@ void comandos(char *comando){
                     
                 }
                 }else
-                if (strcasecmp(token,"-path-")==0)
+                if (strcasecmp(token,"-path")==0)
                 {
-                    token=strtok(NULL,"”");
+                    token=strtok(NULL," ");
                     string temp=string(token);
                     char* name=strrchr(token,'//')+1;
                     name=strtok(name,".");
@@ -119,7 +119,7 @@ void comandos(char *comando){
                     }
                     else if (ENOENT == errno)
                     {
-                        string pth="mkdir -p "+string(nwd.path)+"\"";
+                        string pth="mkdir -p "+string(nwd.path);
                         //string perm="chmod 755 "+temp;
                         int le=pth.length();
                       //  int lp=perm.length();
@@ -140,7 +140,7 @@ void comandos(char *comando){
                     
                     }        
                 }else
-                if (strcasecmp(token,"-u-")==0)
+                if (strcasecmp(token,"-u")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"K")==0){
@@ -150,7 +150,7 @@ void comandos(char *comando){
                         multiplier=1024;
                     }
                 }else
-                if (strcasecmp(token,"-f-")==0)
+                if (strcasecmp(token,"-f")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"BF")==0){
@@ -163,10 +163,10 @@ void comandos(char *comando){
                         nwd.part_fit='W';
                     }
                 }
-                token=strtok(NULL," >");
+                token=strtok(NULL," =");
             }
             string fname=string(nwd.path)+string(nwd.name)+".dk\"";
-            fname = fname.substr(1,fname.length()-2);
+            fname = fname.substr(0,fname.length()-2);
             nwd.size=nwd.size*multiplier;
             nwt.mbr_tamanio=nwd.size*multiplier;
             CreateDsk(fname,nwd.size);
