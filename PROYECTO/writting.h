@@ -52,8 +52,8 @@ struct SuperBloque {
     time_t s_umtime;
     int s_mnt_count;
     int s_magic;
-    int s_inode_size;
-    int s_block_size;
+    int s_inode_s;
+    int s_block_s;
     int s_first_ino;
     int s_first_blo;
     int s_bm_inode_start;
@@ -75,12 +75,13 @@ struct Journaling {
 struct Inodo {
     int i_uid;
     int I_gid;
-    int i_size;
+    int i_s;
     time_t i_atime;
     time_t i_ctime;
     time_t i_mtime;
     int i_block[15];
     char i_type;
+    int i_perm;
 };
 
 struct Content{
@@ -88,8 +89,12 @@ struct Content{
     int b_inodo;
 };
 
+struct PointerBlock{
+    int b_pointers[16];
+};
+
 struct ABlock{
-    int pointers[16];
+    char b_content[64];
 };
 
 struct BloqueCarpetas{

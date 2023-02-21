@@ -90,7 +90,7 @@ void comandos(char *comando){
             nwt.mbr_disk_signature=rand()%100;
             token=strtok(NULL," =");
             while(token != NULL){
-                if (strcasecmp(token,"-s")==0)
+                if (strcasecmp(token,">size")==0)
                 {
                     token=strtok(NULL," ");
                     int s=atoi(token);
@@ -99,9 +99,9 @@ void comandos(char *comando){
                     
                 }
                 }else
-                if (strcasecmp(token,"-path")==0)
+                if (strcasecmp(token,">path")==0)
                 {
-                    token=strtok(NULL," ");
+                    token=strtok(NULL,".dsk");
                     string temp=string(token);
                     char* name=strrchr(token,'//')+1;
                     name=strtok(name,".");
@@ -138,9 +138,10 @@ void comandos(char *comando){
                     else
                     {
                     
-                    }        
+                    }
+                    token=strtok(NULL," ");        
                 }else
-                if (strcasecmp(token,"-u")==0)
+                if (strcasecmp(token,">unit")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"K")==0){
@@ -150,7 +151,7 @@ void comandos(char *comando){
                         multiplier=1024;
                     }
                 }else
-                if (strcasecmp(token,"-f")==0)
+                if (strcasecmp(token,">fit")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"BF")==0){
@@ -165,8 +166,8 @@ void comandos(char *comando){
                 }
                 token=strtok(NULL," =");
             }
-            string fname=string(nwd.path)+string(nwd.name)+".dk\"";
-            fname = fname.substr(0,fname.length()-2);
+            string fname=string(nwd.path)+string(nwd.name)+".dsk\"";
+            fname = fname.substr(0,fname.length()-1);
             nwd.size=nwd.size*multiplier;
             nwt.mbr_tamanio=nwd.size*multiplier;
             CreateDsk(fname,nwd.size);
@@ -175,9 +176,9 @@ void comandos(char *comando){
         }else
         if (strcasecmp(token,"rmdisk")==0)
         {
-            token=strtok(NULL," >");
+            token=strtok(NULL," =");
             while(token != NULL){
-                if (strcasecmp(token,"-path=")==0)
+                if (strcasecmp(token,">path=")==0)
                 {
                     token=strtok(NULL,"”");
                     string temp=string(token);
@@ -201,7 +202,7 @@ void comandos(char *comando){
             struct Partition nwd;
             token=strtok(NULL," >");
             while(token != NULL){
-                if (strcasecmp(token,"-path=")==0)
+                if (strcasecmp(token,">path=")==0)
                 {
                     token=strtok(NULL,"”");
                     string temp=string(token);
@@ -213,7 +214,7 @@ void comandos(char *comando){
                         exit(1);
                     }              
                 }else
-                if (strcasecmp(token,"$name=")==0)
+                if (strcasecmp(token,">name=")==0)
                 {
                     token=strtok(NULL," \n");
                     strcpy(nwd.part_name,token);
@@ -273,9 +274,9 @@ void comandos(char *comando){
             char path[100];
             int modific=0;
             string delt="";
-            token=strtok(NULL," >");
+            token=strtok(NULL," =");
             while(token != NULL){
-                if (strcasecmp(token,"-s-")==0)
+                if (strcasecmp(token,">size")==0)
                 {
                     token=strtok(NULL," ");
                     int s=atoi(token);
@@ -283,7 +284,7 @@ void comandos(char *comando){
                         nwd.part_s=s;
                     }
                 }else
-                if (strcasecmp(token,"-u-")==0)
+                if (strcasecmp(token,">unit")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"B")==0){
@@ -296,9 +297,9 @@ void comandos(char *comando){
                         multiplier=1024*1024;
                     }
                 }else
-                if (strcasecmp(token,"-path-")==0)
+                if (strcasecmp(token,">path")==0)
                 {
-                    token=strtok(NULL,"\"");
+                    token=strtok(NULL," ");
                     string temp=string(token);
                     string pth=temp.substr(0,temp.find('"'));
                     int le=pth.length();
@@ -312,7 +313,7 @@ void comandos(char *comando){
                         exit(1);
                     }              
                 }else
-                if (strcasecmp(token,"-t-")==0)
+                if (strcasecmp(token,">type")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"P")==0){
@@ -325,7 +326,7 @@ void comandos(char *comando){
                         nwd.part_type='L';
                     }
                 }else
-                if (strcasecmp(token,"-f-")==0)
+                if (strcasecmp(token,">fit")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"BestFit")==0){
@@ -338,7 +339,7 @@ void comandos(char *comando){
                         nwd.part_fit='W';
                     }
                 }else
-                if (strcasecmp(token,"-delete-")==0)
+                if (strcasecmp(token,">delete")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"full")==0){
@@ -348,13 +349,13 @@ void comandos(char *comando){
                         delt=string(token);
                     }
                 }else
-                if (strcasecmp(token,"-name-")==0)
+                if (strcasecmp(token,">name")==0)
                 {
                     token=strtok(NULL," \n");
                     strcpy(nwd.part_name,token);
                 }
                 else
-                if (strcasecmp(token,"-add-")==0)
+                if (strcasecmp(token,">add")==0)
                 {
                     token=strtok(NULL," \n");
                     modific=atoi(token);
@@ -364,7 +365,7 @@ void comandos(char *comando){
                 {
                     token=strtok(NULL," \n");
                 }*/
-                token=strtok(NULL," >");
+                token=strtok(NULL," =");
             }
             nwd.part_s=nwd.part_s*multiplier;
             if (delt!="")
@@ -386,11 +387,11 @@ void comandos(char *comando){
             MBR tmm=ReadMBR(tempname);
             ReportDsk(tmm);
         }else
-        if (strcasecmp(token,"exec")==0)
+        if (strcasecmp(token,"execute")==0)
         {
-            token=strtok(NULL," >");
+            token=strtok(NULL," =");
             while(token != NULL){
-                if (strcasecmp(token,"-path-")==0)
+                if (strcasecmp(token,">path")==0)
                 {
                     token=strtok(NULL," ");
                     string temp=string(token);
@@ -426,7 +427,7 @@ void comandos(char *comando){
             string delt="";
             token=strtok(NULL," >");
             while(token != NULL){
-                if (strcasecmp(token,"$id=")==0)
+                if (strcasecmp(token,">id=")==0)
                 {
                     token=strtok(NULL," ");
                     
@@ -440,20 +441,7 @@ void comandos(char *comando){
                         path=(char*)&match->path[0];
                 }
                 }else
-                if (strcasecmp(token,"@unit=")==0)
-                {
-                    token=strtok(NULL," ");
-                    if(strcasecmp(token,"B")==0){
-                        multiplier=1;
-                    }else
-                    if(strcasecmp(token,"K")==0){
-                        multiplier=1024;
-                    }else
-                    if(strcasecmp(token,"M")==0){
-                        multiplier=1024*1024;
-                    }
-                }else
-                if (strcasecmp(token,"@type=")==0)
+                if (strcasecmp(token,">type=")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"Fast")==0){
@@ -463,7 +451,7 @@ void comandos(char *comando){
                         nwd.part_type='F';
                     }
                 }else
-                if (strcasecmp(token,"@add=")==0)
+                if (strcasecmp(token,">fs=")==0)
                 {
                     token=strtok(NULL," ");
                 }

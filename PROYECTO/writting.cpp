@@ -14,6 +14,12 @@ void CreateDsk(string name,int size){
     MyFile.close();
 }
 
+inline bool exists (const std::string& name) {
+    ifstream f(name.c_str());
+    return f.good();
+}
+
+
 void WriteMBR(string name,MBR mbr){
     fstream MyFile;
     MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -567,28 +573,32 @@ void LogicPartition(string name,MBR tm){
 void ReportDsk(MBR tmm){
     string graph="digraph DSK {\n";
     graph+="node [shape=record];";
-    graph+="struct0 [label=\"<f0> MBR";
+    graph+="struct0 [label=<<table><tr><td bgcolor=\"yellow\">MBR</td>";
     if (tmm.mbr_partition_1.part_status!='N')
     {
-        graph+="| <f1>";
+        graph+="<td bgcolor=\"green\">";
         graph+=tmm.mbr_partition_1.part_name;
+        graph+="</td>";
     }
     if (tmm.mbr_partition_2.part_status!='N')
     {
-        graph+="| <f2>";
+        graph+="<td bgcolor=\"green\">";
         graph+=tmm.mbr_partition_2.part_name;
+        graph+="</td>";
     }
     if (tmm.mbr_partition_3.part_status!='N')
     {
-        graph+="| <f3>";
+        graph+="<td bgcolor=\"green\">";
         graph+=tmm.mbr_partition_3.part_name;
+        graph+="</td>";
     }
     if (tmm.mbr_partition_4.part_status!='N')
     {
-        graph+="| <f4>";
+        graph+="<td bgcolor=\"green\">";
         graph+=tmm.mbr_partition_4.part_name;
+        graph+="</td>";
     }
-    graph+="\"];\n";
+    graph+="</tr></table>>];\n";
     graph+="}";
     ofstream Myfile("rep.dot");
 
@@ -615,8 +625,8 @@ void FormatPartition(Partition part,string path,int n){
     sup.s_mtime=time(0);
     sup.s_mnt_count=1;
     sup.s_magic=0xEF53;
-    sup.s_inode_size=sizeof(struct Inodo);
-    sup.s_block_size=sizeof(struct Bloque);
+    sup.s_inode_s=sizeof(struct Inodo);
+    sup.s_block_s=sizeof(struct Bloque);
     sup.s_first_ino=0;
     sup.s_first_blo=0;
 
@@ -633,7 +643,6 @@ void FormatPartition(Partition part,string path,int n){
     MyFile.read((char*)&tm,sizeof(struct MBR));
     MyFile.seekp(i,std::ios_base::beg);
     MyFile.write((char*)&sup,sizeof(struct SuperBloque));
-    MyFile.write((char*)&jn,sizeof(struct Journaling));
     sup.s_bm_inode_start=MyFile.tellg();
     std::vector<char> empty(1, '0');
     for (int j = 0; j < n; j++)
@@ -657,6 +666,7 @@ void FormatPartition(Partition part,string path,int n){
     {
         MyFile.write((char*)&blo,sizeof(struct Bloque));
     }
+    cout<<MyFile.tellg();
 }
 
 int WriteDir(Partition part,string path,string dirpath){
@@ -684,7 +694,7 @@ int WriteDir(Partition part,string path,string dirpath){
     while (token!=NULL)
     {
         MyFile.seekp(sup.s_first_ino,std::ios_base::beg);
-        MyFile.read((char*)&in,sup.s_inode_size);
+        MyFile.read((char*)&in,sup.s_inode_s);
         MyFile.seekp(sup.s_first_blo,std::ios_base::beg);
         MyFile.write((char*)&blc,sizeof(BloqueCarpetas));
         MyFile.write((char*)&empty[0],1);

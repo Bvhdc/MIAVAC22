@@ -1,0 +1,2 @@
+mkdisk >size=5 >unit=M >path=./Disco1.dsk
+
