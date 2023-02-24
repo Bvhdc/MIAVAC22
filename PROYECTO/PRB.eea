@@ -1,2 +1,4 @@
 mkdisk >size=5 >unit=M >path=./Disco1.dsk
-
+fdisk >size=300 >path=./Disco1.dsk >name=Particion1
+rep
+mount >path=./Disco1.dsk >name=Particion1

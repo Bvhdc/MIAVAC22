@@ -680,7 +680,6 @@ int WriteDir(Partition part,string path,string dirpath){
     char* father=NULL;
     int fatherp=0;
     int i=part.part_start;
-    char* token=strtok((char*)path.c_str(),"/");
     MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
         MyFile.open(path,ios_base::binary | ios_base::out | ios_base::in);
@@ -690,7 +689,46 @@ int WriteDir(Partition part,string path,string dirpath){
     }
     MyFile.seekp(i,std::ios_base::beg);
     MyFile.read((char*)&sup,sizeof(SuperBloque));
-    
+    MyFile.seekp(sup.s_bm_inode_start);
+    int n=0;
+    char *e="0";
+    MyFile.read(e,sizeof(char));
+    if(strcasecmp(e,"0")){
+        MyFile.seekp(sup.s_bm_inode_start);
+        e="1";
+        MyFile.write(e,sizeof(char));
+        MyFile.seekp(sup.s_first_ino);
+        Inodo inew;
+        inew.i_uid=0;
+        inew.i_s=0;
+        inew.i_atime=time(0);
+        inew.i_ctime=time(0);
+        inew.i_mtime=time(0);
+        inew.i_block[0]=0;
+        inew.i_type='0';
+        MyFile.write((char*)&inew,sizeof(Inodo));        
+        sup.s_first_ino=MyFile.tellp();
+        MyFile.seekp(sup.s_block_start);
+        MyFile.write(e,sizeof(char));
+        BloqueCarpetas ibloque;
+        strcpy(ibloque.b_content[0].b_name,".");
+        ibloque.b_content[0].b_inodo=0;
+        strcpy(ibloque.b_content[1].b_name,"..");
+        ibloque.b_content[1].b_inodo=0;
+        MyFile.seekp(sup.s_first_blo);
+        MyFile.write((char*)&ibloque,sizeof(BloqueCarpetas));
+        sup.s_first_blo=MyFile.tellp();
+        MyFile.seekp(part.part_start);
+        MyFile.write((char*)&sup,sizeof(SuperBloque));
+    }else{
+        char* token=strtok((char*)path.c_str(),"/");
+        while (token !=NULL)
+        {
+            
+            token = strtok(NULL,"/");
+        }
+        
+    }
     while (token!=NULL)
     {
         MyFile.seekp(sup.s_first_ino,std::ios_base::beg);
@@ -709,13 +747,53 @@ int WriteDir(Partition part,string path,string dirpath){
         sup.s_first_blo+=sizeof(Bloque);
         MyFile.seekp(sup.s_bm_inode_start,std::ios_base::beg); 
     }
- 
+
     
 
    return 1;
 }
 
-
+Inodo *FindDir(char name[12],string path,Partition part){
+    fstream MyFile;
+    SuperBloque sup;
+    Inodo ia;
+    Inodo ip;
+    BloqueCarpetas ba;
+    MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try {
+        MyFile.open(path,ios_base::binary | ios_base::out | ios_base::in);
+    }
+    catch (std::system_error& e) {
+        std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
+    }
+    MyFile.seekp(part.part_start);
+    MyFile.read((char*)&sup,sizeof(SuperBloque));
+    MyFile.seekp(sup.s_inode_start);
+    MyFile.read((char*)&ia,sizeof(Inodo));
+    ip=ia;
+    char* token =strtok(name,"/");
+    while (token != NULL)
+    {
+        for (int i = 1; i < 15; i++)
+        {
+            MyFile.seekp(sup.s_block_start+ia.i_block[i]*sizeof(BloqueCarpetas));
+            MyFile.read((char*)&ba,sizeof(BloqueCarpetas));
+            if (strcasecmp(ba.b_content[0].b_name,token)==0)
+            {
+                MyFile.seekp(sup.s_inode_start+ba.b_content->b_inodo*sup.s_inode_s);
+                MyFile.read((char*)&ia,sizeof(Inodo));
+                break;
+            }
+            
+        }
+        if(ip.i_block[0]==ia.i_block[0]){
+            return NULL;
+        }
+        ip=ia;
+        token=strtok(NULL,"/");
+    }
+    return &ia;
+}
 
 Partition FindPartition(string path,string name){
     fstream MyFile;

@@ -1,3 +1,3 @@
 digraph DSK {
-node [shape=record];struct0 [label=<<table><tr><td bgcolor="yellow">MBR</td><td bgcolor="green">Particion1</td><td bgcolor="green">Particion2</td><td bgcolor="green">Particion3</td><td bgcolor="green">Particion4</td></tr></table>>];
+node [shape=record];struct0 [label=<<table><tr><td bgcolor="yellow">MBR</td><td bgcolor="green">Particion1</td></tr></table>>];
 }

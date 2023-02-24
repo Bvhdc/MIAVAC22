@@ -101,7 +101,7 @@ void comandos(char *comando){
                 }else
                 if (strcasecmp(token,">path")==0)
                 {
-                    token=strtok(NULL,".dsk");
+                    token=strtok(NULL," ");
                     string temp=string(token);
                     char* name=strrchr(token,'//')+1;
                     name=strtok(name,".");
@@ -138,8 +138,7 @@ void comandos(char *comando){
                     else
                     {
                     
-                    }
-                    token=strtok(NULL," ");        
+                    }        
                 }else
                 if (strcasecmp(token,">unit")==0)
                 {
@@ -193,18 +192,18 @@ void comandos(char *comando){
                         exit(1);
                     }               
                 }
-                token=strtok(NULL," >");
+                token=strtok(NULL," =");
             }
         }else
         if (strcasecmp(token,"mount")==0)
         {
             char path[100]="";
             struct Partition nwd;
-            token=strtok(NULL," >");
+            token=strtok(NULL,"=");
             while(token != NULL){
-                if (strcasecmp(token,">path=")==0)
+                if (strcasecmp(token,">path")==0)
                 {
-                    token=strtok(NULL,"”");
+                    token=strtok(NULL," ");
                     string temp=string(token);
                     strcpy(path,token);
                     if (exists(path))
@@ -214,12 +213,12 @@ void comandos(char *comando){
                         exit(1);
                     }              
                 }else
-                if (strcasecmp(token,">name=")==0)
+                if (strcasecmp(token,">name")==0)
                 {
                     token=strtok(NULL," \n");
                     strcpy(nwd.part_name,token);
                 }
-                token=strtok(NULL," >");
+                token=strtok(NULL," =");
             }
             if (strcasecmp(path,"")!=0&&strcasecmp(nwd.part_name,"")!=0)
             {
@@ -264,7 +263,6 @@ void comandos(char *comando){
                 }
                 
             }
-            
 
         }else
         if (strcasecmp(token,"fdisk")==0)
