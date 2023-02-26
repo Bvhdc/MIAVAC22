@@ -79,7 +79,7 @@ struct Inodo {
     time_t i_atime;
     time_t i_ctime;
     time_t i_mtime;
-    int i_block[15];
+    int i_block[16];
     char i_type;
     int i_perm;
 };
