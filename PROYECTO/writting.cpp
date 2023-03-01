@@ -668,7 +668,7 @@ void FormatPartition(Partition part,string path,int n){
     }
     cout<<MyFile.tellg();
 }
-
+//err
 int WriteDir(Partition part,string path,string dirpath){
     fstream MyFile;
     SuperBloque sup;
@@ -713,7 +713,11 @@ int WriteDir(Partition part,string path,string dirpath){
         MyFile.seekp(sup.s_block_start);
         MyFile.write(e,sizeof(char));
         BloqueCarpetas ibloque;
-        fill_n(ibloque.b_content,4,-1);
+        for (int i = 0; i < 4; i++)
+        {
+            ibloque.b_content[i].b_inodo=-1;
+        }
+        
         strcpy(ibloque.b_content[0].b_name,".");
         ibloque.b_content[0].b_inodo=0;
         strcpy(ibloque.b_content[1].b_name,"..");
@@ -732,13 +736,19 @@ int WriteDir(Partition part,string path,string dirpath){
         MyFile.seekp(sup.s_block_start);
         MyFile.read((char*)&bpadre,sup.s_block_s);
         while (token !=NULL)
-        {
-            if (FindDir(token,path,part,sup)==NULL)
+        {  
+            try
             {
+                padre=FindDir(token,path,part,sup);
+            }
+            catch(int num)
+            {
+                MyFile.seekp(sup.s_block_start+padre.i_block[0]*sup.s_block_s);
+                MyFile.read((char*)&bpadre,sup.s_block_s);
                 NewDir(bpadre.b_content[0].b_inodo,bpadre.b_content[0].b_name,token,0,0,path,sup,part);
             }
-            &bpadre FindDir(token,path,part,sup);
         }
+        
         
     }
     MyFile.close();
@@ -780,16 +790,16 @@ void NewDir(int padre, char *pname, char *name, int uid, int gid, string path, S
         {
             if (bpadre.b_content[j].b_inodo==-1)
             {
-                bnew.b_content[1].b_inodo=padre;
-                strcpy(bnew.b_content[1].b_name,pname);
+                bnew.b_content[0].b_inodo=padre;
+                strcpy(bnew.b_content[0].b_name,pname);
                 break;
             }
             
         }
         if (bpadre.b_content[j].b_inodo==-1)
         {
-            bnew.b_content[1].b_inodo=padre;
-            strcpy(bnew.b_content[1].b_name,pname);
+            bnew.b_content[0].b_inodo=padre;
+            strcpy(bnew.b_content[0].b_name,pname);
             break;
         }
         
@@ -831,7 +841,7 @@ void NewDir(int padre, char *pname, char *name, int uid, int gid, string path, S
     MyFile.close();
 }
 
-BloqueCarpetas FindDir(char name[12],string path,Partition part,SuperBloque sup){
+Inodo FindDir(char name[12],string path,Partition part,SuperBloque sup){
     fstream MyFile;
     MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
@@ -850,11 +860,12 @@ BloqueCarpetas FindDir(char name[12],string path,Partition part,SuperBloque sup)
     MyFile.read((char*)&ba,sizeof(BloqueCarpetas));
     ip=ia;
     bp=ba;
+    int i;
+    int j;
     char* token =strtok(name,"/");
     while (token != NULL)
     {
-        int i;
-        int j;
+        
         for (i = 1; i < 13; i++)
         {
             if (ia.i_block[i]!=-1)
@@ -868,22 +879,23 @@ BloqueCarpetas FindDir(char name[12],string path,Partition part,SuperBloque sup)
                             break;
                         }
                     }
-                }
-                if(strcmp(token,ba.b_content[j].b_name)==0){
-                    break;
+                    if(ba.b_content[j].b_inodo!=-1){
+                            break;
+                        }
+                    }
                 }
             }
             
-        }
-        if(ba.b_content[j].b_name!=token){
-            throw "NOT FOUND";
-        }
-        MyFile.seekp(sup.s_inode_start+ sup.s_inode_s*ba.b_content[j].b_inodo);
-        MyFile.read((char*)&ia,sup.s_inode_s);
-        token=strtok(NULL,"/");
+    
+    if(ba.b_content[j].b_name!=token){
+        throw 404;
     }
+    MyFile.seekp(sup.s_inode_start+ sup.s_inode_s*ba.b_content[j].b_inodo);
+    MyFile.read((char*)&ia,sup.s_inode_s);
+    token=strtok(NULL,"/");
+    };
     MyFile.close();
-    return ba;
+    return ia;
 }
 
 Partition FindPartition(string path,string name){
@@ -951,6 +963,58 @@ MBR ReadMBR(string path){
     return tm;
 }
 
-void reportTree(){
+int Partnum(string path, Partition Part){
+    fstream MyFile;
+    MBR mb;
+    try {
+        MyFile.open(path,ios_base::binary | ios_base::out | ios_base::in);
+    }
+    catch (std::system_error& e) {
+        std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
+    }
+    mb=ReadMBR(path);
+    if (strcmp(mb.mbr_partition_1.part_name,Part.part_name)==0)
+    {
+        MyFile.close();
+        return 1;
+    }
+    if (strcmp(mb.mbr_partition_2.part_name,Part.part_name)==0)
+    {
+        MyFile.close();
+        return 2;
+    }
+    if (strcmp(mb.mbr_partition_3.part_name,Part.part_name)==0)
+    {
+        MyFile.close();
+        return 3;
+    }
+    if (strcmp(mb.mbr_partition_4.part_name,Part.part_name)==0)
+    {
+        MyFile.close();
+        return 4;
+    }
+    
 
+};
+
+void reportTree(string path,Partition part,SuperBloque sup){
+    fstream MyFile;
+    MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try {
+        MyFile.open(path,ios_base::binary | ios_base::out | ios_base::in);
+    }
+    catch (std::system_error& e) {
+        std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
+    }
+    char active;
+    MyFile.seekp(sup.s_bm_inode_start);
+    for (int i = 0; i < sup.s_inodes_count; i++)
+    {
+        MyFile.read((char*)active,sizeof(char));
+        if(active!='0'){
+            
+        }
+    };
+    
+    
 }

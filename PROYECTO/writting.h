@@ -111,6 +111,10 @@ struct MBR
     Partition mbr_partition_3;
     Partition mbr_partition_4;
 };
+int Partnum(string path, Partition Part);
+Partition FindPartition(string path,string name);
+Inodo FindDir(char name[12],string path,Partition part,SuperBloque sup);
+void NewDir(int padre, char *pname, char *name, int uid, int gid, string path, SuperBloque sup,Partition part);
 
 void CreateDsk(string name,int size);
 

@@ -19,10 +19,7 @@ struct MountedDisks
 {
     string id;
     char path[100];
-    int iid=0;
-    char letter;
     Partition part;
-    int lid=0;
 };
 
 
@@ -103,14 +100,14 @@ void comandos(char *comando){
                 {
                     token=strtok(NULL," ");
                     string temp=string(token);
-                    char* name=strrchr(token,'//')+1;
-                    name=strtok(name,".");
+                    string name=temp.substr(0,temp.find(".dsk"));
+                    name=name.substr(name.find_last_of("/")+1);                    
                     string pth=temp.substr(0,temp.find(name));
                     int le=pth.length();
                     char cmp[le];
                     strcpy(cmp,pth.c_str());
                     strcpy(nwd.path,cmp);
-                    strcpy(nwd.name,name);
+                    strcpy(nwd.name,name.c_str());
                     DIR* dir = opendir(cmp);
                     if (dir)
                     {
@@ -198,6 +195,8 @@ void comandos(char *comando){
         if (strcasecmp(token,"mount")==0)
         {
             char path[100]="";
+            string name;
+            string partname;
             struct Partition nwd;
             token=strtok(NULL,"=");
             while(token != NULL){
@@ -205,54 +204,38 @@ void comandos(char *comando){
                 {
                     token=strtok(NULL," ");
                     string temp=string(token);
-                    strcpy(path,token);
+                    name=temp.substr(0,temp.find(".dsk"));
+                    name=name.substr(name.find_last_of("/")+1); 
+                    strcpy(path,temp.c_str());
                     if (exists(path))
                     {
                     }else{
                         printf("Error Finding file !n");
                         exit(1);
-                    }              
+                    }
+                                 
                 }else
                 if (strcasecmp(token,">name")==0)
                 {
-                    token=strtok(NULL," \n");
-                    strcpy(nwd.part_name,token);
+                    token=strtok(NULL," ");
+                    partname=string(token);
                 }
                 token=strtok(NULL," =");
             }
-            if (strcasecmp(path,"")!=0&&strcasecmp(nwd.part_name,"")!=0)
+            if (strcasecmp(path,"")!=0&&strcasecmp(partname.c_str(),"")!=0)
             {
-                Partition prt=FindPartition(path,nwd.part_name);
+                Partition prt=FindPartition(path,partname);
                 auto match = std::find_if(mounted.cbegin(), mounted.cend(), [&path,&prt] (const MountedDisks& s) {
                 return strcasecmp(s.path,path)==0;
                 });
-                if (match != mounted.cend()) {
+                if (true) {
                     MountedDisks nw;
-                    nw.id="vd";
-                    nw.iid=(match->iid)+1;
-                    nw.lid=match->lid;
-                    string i= to_string(nw.iid);
-                    nw.id+=match->letter+i;
-                    nw.letter=match->letter;
+                    nw.id="72";
+                    string i= to_string(Partnum(path,prt));
+                    i+=name;
+                    nw.id+=i.c_str();
                     nw.part=prt;
                     strcpy(nw.path,path);
-                    mounted.push_front(nw);
-                }else{
-                    MountedDisks nw;
-                    nw.id="vd";
-                    if (mounted.empty())
-                    {
-                        nw.iid=1;
-                        nw.lid=97;
-                    }else{
-                        nw.iid=(mounted.begin()->iid)+1;
-                        nw.lid=(mounted.begin()->lid)+1;
-                    }
-                    nw.letter=char(nw.lid);
-                    strcpy(nw.path,path);
-                    nw.part=prt;
-                    string i= to_string(nw.iid);
-                    nw.id+=nw.letter+i;
                     mounted.push_front(nw);
                 }
             }else{
@@ -423,9 +406,9 @@ void comandos(char *comando){
             char type;
             int modific=0;
             string delt="";
-            token=strtok(NULL," >");
+            token=strtok(NULL," =");
             while(token != NULL){
-                if (strcasecmp(token,">id=")==0)
+                if (strcasecmp(token,">id")==0)
                 {
                     token=strtok(NULL," ");
                     
@@ -439,7 +422,7 @@ void comandos(char *comando){
                         path=(char*)&match->path[0];
                 }
                 }else
-                if (strcasecmp(token,">type=")==0)
+                if (strcasecmp(token,">type")==0)
                 {
                     token=strtok(NULL," ");
                     if(strcasecmp(token,"Fast")==0){
@@ -449,11 +432,11 @@ void comandos(char *comando){
                         nwd.part_type='F';
                     }
                 }else
-                if (strcasecmp(token,">fs=")==0)
+                if (strcasecmp(token,">fs")==0)
                 {
                     token=strtok(NULL," ");
                 }
-                token=strtok(NULL," >");
+                token=strtok(NULL," =");
             }
             int nst=calcStructures(nwd.part_s);
             FormatPartition(nwd,path,nst);
