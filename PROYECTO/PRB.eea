@@ -1,6 +1,7 @@
 mkdisk >path=./Disco1.dsk >size=5 >unit=M 
 fdisk >size=300 >path=./Disco1.dsk >name=Particion1
-rep
 mount >path=./Disco1.dsk >name=Particion1
 mount
 mkfs >type=full >id=721Disco1
+mkdir >path=/home/misdocumentos/archivosdiciembre
+rep

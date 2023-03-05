@@ -84,6 +84,7 @@ struct Inodo {
     int i_perm;
 };
 
+
 struct Content{
     char b_name[12];
     int b_inodo;
@@ -126,5 +127,6 @@ int DeletePart(string name,string path,string ty);
 int WritePartition(string name,Partition part);
 Partition FindPartition(string path,string name);
 void FormatPartition(Partition part,string path,int n);
-
+void ReportTree(string path, Partition part, SuperBloque sup);
+int WriteDir(Partition part, string path, string dirpath);
 #endif

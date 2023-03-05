@@ -1,0 +1,71 @@
+digraph tree {
+node[ shape = none, fontname = "Arial" ];
+inodo0[label =<
+<TABLE bgcolor="#84E1E6">
+    <TR>
+       <TD PORT="I0">Inodo 0</TD>
+   </TR>
+   <TR>
+       <TD>Ap 0</TD>
+       <TD PORT="A0">0</TD>
+   </TR>
+   <TR>
+       <TD>Ap 1</TD>
+       <TD PORT="A1">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 2</TD>
+       <TD PORT="A2">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 3</TD>
+       <TD PORT="A3">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 4</TD>
+       <TD PORT="A4">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 5</TD>
+       <TD PORT="A5">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 6</TD>
+       <TD PORT="A6">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 7</TD>
+       <TD PORT="A7">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 8</TD>
+       <TD PORT="A8">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 9</TD>
+       <TD PORT="A9">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 10</TD>
+       <TD PORT="A10">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 11</TD>
+       <TD PORT="A11">-1</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta0[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 0</TD>
+   </TR>
+   <TR>
+       <TD>.</TD>
+       <TD PORT="A0">0</TD>
+   </TR>
+   <TR>
+       <TD>..</TD>
+       <TD PORT="A0">0</TD>
+   </TR>
+</TABLE>>];
+}
