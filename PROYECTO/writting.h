@@ -115,12 +115,12 @@ struct MBR
 int Partnum(string path, Partition Part);
 Partition FindPartition(string path,string name);
 Inodo FindDir(char name[12],string path,Partition part,SuperBloque sup);
-void NewDir(int padre, char *pname, char *name, int uid, int gid, string path, SuperBloque sup,Partition part);
+Inodo NewDir(int padre, char *pname, char *name, int uid, int gid, string path, SuperBloque sup,Partition part);
 
 void CreateDsk(string name,int size);
 
 void ReportDsk(MBR tmm);
-
+void AddDir(string dirpath,Partition part,SuperBloque sup,string path);
 void WriteMBR(string name,MBR mbr);
 MBR ReadMBR(string path);
 int DeletePart(string name,string path,string ty);

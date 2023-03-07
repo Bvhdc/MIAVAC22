@@ -198,20 +198,6 @@ void comandos(char *comando)
                 token = strtok(NULL, " =");
             }
         }
-        else if (strcasecmp(token, "mkdir") == 0)
-        {
-            token = strtok(NULL, " =");
-            while (token != NULL)
-            {
-                if (strcasecmp(token, ">path") == 0)
-                {
-                    token = strtok(NULL, " ");
-                    string temp = string(token);
-                    WriteDir(mounted.front().part, mounted.front().path, temp);
-                }
-                token = strtok(NULL, " =");
-            }
-        }
         else if (strcasecmp(token, "mount") == 0)
         {
             char path[100] = "";
@@ -380,10 +366,10 @@ void comandos(char *comando)
                     modific = atoi(token);
 
                 } /*else
-                 if (strcasecmp(token,"$mov=")==0)
-                 {
-                     token=strtok(NULL," \n");
-                 }*/
+                if (strcasecmp(token,"$mov=")==0)
+                {
+                    token=strtok(NULL," \n");
+                }*/
                 token = strtok(NULL, " =");
             }
             nwd.part_s = nwd.part_s * multiplier;
@@ -398,6 +384,40 @@ void comandos(char *comando)
             {
                 WritePartition(path, nwd);
             }
+        }
+        else if (strcasecmp(token, "mkdir") == 0)
+        {
+            char path[100] = "";
+            string temp;
+            token = strtok(NULL, "=");
+            while (token != NULL)
+            {
+                if (strcasecmp(token, ">path") == 0)
+                {
+                    token = strtok(NULL, " ");
+                    temp = string(token);
+                }
+                else if (strcasecmp(token, ">name") == 0)
+                {
+                    token = strtok(NULL, " ");
+                }
+                token = strtok(NULL, " =");
+            }
+            SuperBloque sup;
+            fstream MyFile;
+            MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            try
+            {
+                MyFile.open(mounted.front().path, ios_base::binary | ios_base::out | ios_base::in);
+            }
+            catch (std::system_error &e)
+            {
+                std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
+            }
+            int pos = mounted.front().part.part_start;
+            MyFile.seekp(mounted.front().part.part_start);
+            MyFile.read((char *)&sup, sizeof(SuperBloque));
+            AddDir(temp, mounted.front().part, sup, mounted.front().path);
         }
         else if (strcasecmp(token, "rep") == 0)
         {
