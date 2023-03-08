@@ -4,4 +4,5 @@ mount >path=./Disco1.dsk >name=Particion1
 mount
 mkfs >type=full >id=721Disco1
 mkdir >path=/home/misdocumentos/archivosdiciembre
+mkdir >path=/usr/misdocumentos/archivosdiciembre
 rep

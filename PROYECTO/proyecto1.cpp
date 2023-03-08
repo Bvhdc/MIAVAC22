@@ -417,7 +417,7 @@ void comandos(char *comando)
             int pos = mounted.front().part.part_start;
             MyFile.seekp(mounted.front().part.part_start);
             MyFile.read((char *)&sup, sizeof(SuperBloque));
-            AddDir(temp, mounted.front().part, sup, mounted.front().path);
+            AddDir(temp, mounted.front().part, mounted.front().path);
         }
         else if (strcasecmp(token, "rep") == 0)
         {

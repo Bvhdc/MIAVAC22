@@ -727,7 +727,7 @@ int WriteDir(Partition part, string path, string dirpath)
             {
                 MyFile.seekp(sup.s_block_start + padre.i_block[0] * sup.s_block_s);
                 MyFile.read((char *)&bpadre, sup.s_block_s);
-                NewDir(bpadre.b_content[0].b_inodo, bpadre.b_content[0].b_name, token, 0, 0, path, sup, part);
+                NewDir(bpadre.b_content[0].b_inodo, bpadre.b_content[0].b_name, token, 0, 0, path, part);
             }
             token = strtok(NULL, "/");
         }
@@ -804,12 +804,13 @@ void FormatPartition(Partition part, string path, int n)
 }
 // err
 
-Inodo NewDir(int padre, char *pname, char name[100], int uid, int gid, string path, SuperBloque sup, Partition part)
+Inodo NewDr(int padre, string pname, string name, int uid, int gid, string path, Partition part)
 {
     Inodo inew;
     fstream MyFile;
     Inodo ipadre;
     BloqueCarpetas bpadre;
+    SuperBloque sup;
     MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
     {
@@ -819,26 +820,29 @@ Inodo NewDir(int padre, char *pname, char name[100], int uid, int gid, string pa
     {
         std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
     }
+    MyFile.seekp(part.part_start);
+    MyFile.read((char *)&sup, sizeof(SuperBloque));
     inew.i_uid = 0;
     inew.i_s = 0;
     inew.i_atime = time(0);
     inew.i_ctime = time(0);
     inew.i_mtime = time(0);
     fill_n(inew.i_block, 16, -1);
-    inew.i_block[0] = 0;
     inew.i_type = '0';
     BloqueCarpetas bnew;
     for (int i = 0; i < 4; i++)
     {
         bnew.b_content[i].b_inodo = -1;
     }
-
     MyFile.seekp(sup.s_inode_start + padre * sup.s_inode_s);
     MyFile.read((char *)&ipadre, sup.s_inode_s);
-    strcpy(bnew.b_content[0].b_name, name);
+    MyFile.read((char *)&bpadre, sup.s_block_s);
+    strcpy(bnew.b_content[0].b_name, name.c_str());
     bnew.b_content[0].b_inodo = sup.s_first_ino;
     bnew.b_content[1].b_inodo = padre;
-    bool added = true;
+    strcpy(bnew.b_content[1].b_name, bpadre.b_content[0].b_name);
+    bool added = false;
+    int fs = -1;
     for (int i = 0; i < 15; i++)
     {
         if (ipadre.i_block[i] != -1)
@@ -850,55 +854,51 @@ Inodo NewDir(int padre, char *pname, char name[100], int uid, int gid, string pa
             {
                 if (bpadre.b_content[j].b_inodo == -1)
                 {
-                    bnew.b_content[1].b_inodo = padre;
-                    strcpy(bnew.b_content[1].b_name, pname);
                     bpadre.b_content[j].b_inodo = bnew.b_content[0].b_inodo;
                     strcpy(bpadre.b_content[j].b_name, bnew.b_content[0].b_name);
-                    MyFile.seekp(sup.s_inode_start+ ipadre.i_block[i]*sup.s_block_s);
-                    MyFile.write((char*)&bpadre,sup.s_block_s);
-                    added = false;
+                    MyFile.seekp(sup.s_block_start + ipadre.i_block[i] * sup.s_block_s);
+                    MyFile.write((char *)&bpadre, sup.s_block_s);
+                    added = true;
                     break;
                 }
             }
-            if (bpadre.b_content[j].b_inodo == -1)
+            if (added)
             {
-                bnew.b_content[0].b_inodo = padre;
-                strcpy(bnew.b_content[0].b_name, pname);
-                added=false;
                 break;
             }
         }
-        else if (added)
+        else if (fs == -1)
         {
-            BloqueCarpetas nblock;
-            for (int z = 0; z < 4; z++)
-            {
-                nblock.b_content[z].b_inodo = -1;
-            }
-            nblock.b_content[0].b_inodo = bnew.b_content[0].b_inodo;
-            strcpy(nblock.b_content[0].b_name, bnew.b_content[0].b_name);
-            ipadre.i_block[i] = sup.s_first_blo;
-            MyFile.seekp(sup.s_block_start + ipadre.i_block[i] * sup.s_block_s);
-            MyFile.write((char *)&nblock, sup.s_block_s);
-            MyFile.seekp(sup.s_bm_block_start);
-            for (int b = sup.s_bm_block_start; i < sup.s_inode_start; i++)
-            {
-                char ac='0';
-                MyFile.read((char *)&ac, sizeof(char));
-                if (ac != '1')
-                {
-                    sup.s_first_blo = (b - sup.s_bm_block_start);
-                    break;
-                }
-            };
-            MyFile.seekp(sup.s_inode_start+bpadre.b_content[0].b_inodo*sup.s_inode_s);
-            MyFile.write((char*)&ipadre,sup.s_inode_s);
-            break;
+            fs = i;
         }
     }
+    if (!added)
+    {
+        BloqueCarpetas nblock;
+        for (int z = 0; z < 4; z++)
+        {
+            nblock.b_content[z].b_inodo = -1;
+        }
+        nblock.b_content[0].b_inodo = bnew.b_content[0].b_inodo;
+        strcpy(nblock.b_content[0].b_name, bnew.b_content[0].b_name);
+        ipadre.i_block[fs] = sup.s_first_blo;
+        MyFile.seekp(sup.s_block_start + ipadre.i_block[fs] * sup.s_block_s);
+        MyFile.write((char *)&nblock, sup.s_block_s);
+        MyFile.seekp(sup.s_bm_block_start);
+        for (int b = sup.s_bm_block_start; b < sup.s_inode_start; b++)
+        {
+            char ac = '0';
+            MyFile.read((char *)&ac, sizeof(char));
+            if (ac != '1')
+            {
+                sup.s_first_blo = (b - sup.s_bm_block_start);
+                break;
+            }
+        };
+        MyFile.seekp(sup.s_inode_start + bpadre.b_content[0].b_inodo * sup.s_inode_s);
+        MyFile.write((char *)&ipadre, sup.s_inode_s);
+    }
     inew.i_block[0] = sup.s_first_blo;
-    strcpy(bnew.b_content[1].b_name, bpadre.b_content[0].b_name);
-    bnew.b_content[1].b_inodo=bpadre.b_content[0].b_inodo;
     MyFile.seekp(sup.s_bm_inode_start + sup.s_first_ino);
     MyFile.write("1", sizeof(char));
     MyFile.seekp(sup.s_bm_block_start + sup.s_first_blo);
@@ -906,9 +906,7 @@ Inodo NewDir(int padre, char *pname, char name[100], int uid, int gid, string pa
     MyFile.seekp(sup.s_inode_start + sup.s_first_ino * sup.s_inode_s);
     MyFile.write((char *)&inew, sup.s_inode_s);
     MyFile.seekp(sup.s_block_start + sup.s_first_blo * sup.s_block_s);
-    MyFile.write((char *)&bnew, sup.s_inode_s);
-    MyFile.seekp(part.part_start);
-    MyFile.write((char*)&sup,sizeof(SuperBloque));
+    MyFile.write((char *)&bnew, sup.s_block_s);
     char ac = '1';
     int i;
     int b;
@@ -923,7 +921,7 @@ Inodo NewDir(int padre, char *pname, char name[100], int uid, int gid, string pa
         }
     };
     MyFile.seekp(sup.s_bm_block_start);
-    for (b = sup.s_bm_block_start; i < sup.s_inode_start; i++)
+    for (b = sup.s_bm_block_start; b < sup.s_inode_start; b++)
     {
         MyFile.read((char *)&ac, sizeof(char));
         if (ac != '1')
@@ -934,12 +932,21 @@ Inodo NewDir(int padre, char *pname, char name[100], int uid, int gid, string pa
     };
     MyFile.seekp(part.part_start);
     MyFile.write((char *)&sup, sizeof(SuperBloque));
+    MyFile.seekp(sup.s_block_start);
+    BloqueCarpetas car;
+    for (int i = 0; i < 10; i++)
+    {
+        MyFile.read((char *)&car, sup.s_block_s);
+        cout << car.b_content[0].b_inodo << endl;
+    }
+
     MyFile.close();
     return inew;
 }
 
-void MkDir(Inodo start, string dirpath, Partition part, SuperBloque sup, string path)
+void MkDir(Inodo start, string dirpath, Partition part, string path)
 {
+    SuperBloque sup;
     fstream MyFile;
     MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
@@ -950,6 +957,8 @@ void MkDir(Inodo start, string dirpath, Partition part, SuperBloque sup, string 
     {
         std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
     }
+    MyFile.seekp(part.part_start);
+    MyFile.read((char *)&sup, sizeof(SuperBloque));
     Inodo nt;
     int val;
     val = -1;
@@ -966,13 +975,12 @@ void MkDir(Inodo start, string dirpath, Partition part, SuperBloque sup, string 
         {
             char pn[100];
             strcpy(pn, dirpath.c_str());
-            NewDir(bl.b_content[0].b_inodo, bl.b_content[0].b_name, pn, 0, 0, path, sup, part);
+            NewDir(bl.b_content[0].b_inodo, bl.b_content[0].b_name, pn, 0, 0, path, part);
             return;
         }
     }
 
     string adir = dirpath.substr(0, dirpath.find('/'));
-    char *token = strtok((char *)&dirpath, "/");
     for (int i = 0; i < 16; i++)
     {
         BloqueCarpetas ba;
@@ -1008,7 +1016,7 @@ void MkDir(Inodo start, string dirpath, Partition part, SuperBloque sup, string 
     }
     if (val != -1)
     {
-        MkDir(nt, dirpath.substr(dirpath.find('/') + 1), part, sup, path);
+        MkDir(nt, dirpath.substr(dirpath.find('/') + 1), part, path);
     }
     else
     {
@@ -1017,15 +1025,16 @@ void MkDir(Inodo start, string dirpath, Partition part, SuperBloque sup, string 
         MyFile.read((char *)&blp, sup.s_block_s);
         char pn[100];
         strcpy(pn, adir.c_str());
-        nt = NewDir(blp.b_content[0].b_inodo, blp.b_content[0].b_name, pn, 0, 0, path, sup, part);
-        MkDir(nt, dirpath.substr(dirpath.find('/') + 1), part, sup, path);
+        nt = NewDir(blp.b_content[0].b_inodo, blp.b_content[0].b_name, pn, 0, 0, path, part);
+        MkDir(nt, dirpath.substr(dirpath.find('/') + 1), part, path);
     }
 }
 
-void AddDir(string dirpath, Partition part, SuperBloque sup, string path)
+void AddDir(string dirpath, Partition part, string path)
 {
     fstream MyFile;
     Inodo root;
+    SuperBloque sup;
     MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
     {
@@ -1035,6 +1044,8 @@ void AddDir(string dirpath, Partition part, SuperBloque sup, string path)
     {
         std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
     }
+    MyFile.seekp(part.part_start);
+    MyFile.read((char *)&sup, sizeof(SuperBloque));
     MyFile.seekp(sup.s_inode_start);
     MyFile.read((char *)&root, sup.s_inode_s);
     if (dirpath.find('/') == 0)
@@ -1042,7 +1053,7 @@ void AddDir(string dirpath, Partition part, SuperBloque sup, string path)
         int pos = dirpath.find('/');
         dirpath = dirpath.substr(1, dirpath.find(1, '/'));
     }
-    MkDir(root, dirpath, part, sup, path);
+    MkDir(root, dirpath, part, path);
 }
 
 Inodo FindDir(char name[12], string path, Partition part, SuperBloque sup)
@@ -1301,7 +1312,7 @@ string addnodes(string path, Inodo in, SuperBloque sup)
                          MyFile.read((char *)&blo, sup.s_block_s);*/
                         rep = rep + "   <TR>\n";
                         rep = rep + "       <TD>";
-                        rep = rep + blo.b_content[j].b_name;
+                        rep = rep + string(blo.b_content[j].b_name);
                         rep = rep + "</TD>\n";
                         rep = rep + "       <TD PORT=\"A";
                         rep = rep + to_string(i);
@@ -1309,12 +1320,25 @@ string addnodes(string path, Inodo in, SuperBloque sup)
                         rep = rep + to_string(blo.b_content[j].b_inodo);
                         rep = rep + "</TD>\n";
                         rep = rep + "   </TR>\n";
-                        if (blo.b_content[j].b_inodo != id)
+                        if (i == 0)
                         {
-                            Inodo next;
-                            MyFile.seekp(sup.s_inode_start + in.i_block[j] * sup.s_inode_s);
-                            MyFile.read((char *)&next, sup.s_inode_s);
-                            aux = addnodes(path, next, sup);
+                            if ((blo.b_content[j].b_inodo != id) && j > 1)
+                            {
+                                Inodo next;
+                                MyFile.seekp(sup.s_inode_start + blo.b_content[j].b_inodo * sup.s_inode_s);
+                                MyFile.read((char *)&next, sup.s_inode_s);
+                                aux = addnodes(path, next, sup);
+                            }
+                        }
+                        else
+                        {
+                            if ((blo.b_content[j].b_inodo != id))
+                            {
+                                Inodo next;
+                                MyFile.seekp(sup.s_inode_start + blo.b_content[j].b_inodo * sup.s_inode_s);
+                                MyFile.read((char *)&next, sup.s_inode_s);
+                                aux = addnodes(path, next, sup);
+                            }
                         }
                     }
                 }
