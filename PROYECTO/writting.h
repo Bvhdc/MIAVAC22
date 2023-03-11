@@ -37,10 +37,6 @@ struct Partition
     char part_name[16]="";
 };
 
-struct Bloque {
-    char nombre[15];
-    char informacion[50];
-};
 
 struct SuperBloque {
     int s_filesystem_type;
@@ -115,7 +111,7 @@ struct MBR
 int Partnum(string path, Partition Part);
 Partition FindPartition(string path,string name);
 Inodo FindDir(char name[12],string path,Partition part,SuperBloque sup);
-Inodo NewDir(int padre, char *pname, char *name, int uid, int gid, string path,Partition part);
+Inodo NewDir(int padre, string pname, string name, int uid, int gid, string path,Partition part);
 
 void CreateDsk(string name,int size);
 

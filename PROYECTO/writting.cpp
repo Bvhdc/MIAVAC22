@@ -604,32 +604,61 @@ void LogicPartition(string name, MBR tm)
 void ReportDsk(MBR tmm)
 {
     string graph = "digraph DSK {\n";
+    int val;
+    int sum=0;
     graph += "node [shape=record];";
     graph += "struct0 [label=<<TABLE><tr><td bgcolor=\"yellow\">MBR</td>";
     if (tmm.mbr_partition_1.part_status != 'N')
     {
-        graph += "<td bgcolor=\"green\">";
+        val = (tmm.mbr_partition_1.part_s * 100) / tmm.mbr_tamanio;
+        sum += val;
+        graph += "<td bgcolor=\"green\" width=\"";
+        graph += to_string(val);
+        graph += "%\"";
+        graph += ">";
         graph += tmm.mbr_partition_1.part_name;
         graph += "</td>";
     }
     if (tmm.mbr_partition_2.part_status != 'N')
     {
-        graph += "<td bgcolor=\"green\">";
+        val = (tmm.mbr_partition_2.part_s * 100) / tmm.mbr_tamanio;
+        sum += val;
+        graph += "<td bgcolor=\"green\" width=\"";
+        graph += to_string(val);
+        graph += "%\"";
+        graph += ">";
         graph += tmm.mbr_partition_2.part_name;
         graph += "</td>";
     }
     if (tmm.mbr_partition_3.part_status != 'N')
     {
-        graph += "<td bgcolor=\"green\">";
+        val = (tmm.mbr_partition_3.part_s * 100) / tmm.mbr_tamanio;
+        sum += val;
+        graph += "<td bgcolor=\"green\" width=\"";
+        graph += to_string(val);
+        graph += "%\"";
+        graph += ">";
         graph += tmm.mbr_partition_3.part_name;
         graph += "</td>";
     }
     if (tmm.mbr_partition_4.part_status != 'N')
     {
-        graph += "<td bgcolor=\"green\">";
+        val = (tmm.mbr_partition_4.part_s * 100) / tmm.mbr_tamanio;
+        sum += val;
+        graph += "<td bgcolor=\"green\" width=\"";
+        graph += to_string(val);
+        graph += "%\"";
+        graph += ">";
         graph += tmm.mbr_partition_4.part_name;
         graph += "</td>";
     }
+    val = 100-sum;
+    graph += "<td bgcolor=\"gray\" width=\"";
+    graph += to_string(val);
+    graph += "%\"";
+    graph += ">";
+    graph += "empty";
+    graph += "</td>";
     graph += "</tr></TABLE>>];\n";
     graph += "}";
     ofstream Myfile("rep.dot");
@@ -650,7 +679,6 @@ int WriteDir(Partition part, string path, string dirpath)
     SuperBloque sup;
     Journaling jn;
     Inodo in;
-    Bloque blo;
     BloqueCarpetas blc;
     std::vector<char> empty(1, '\0');
     char *father = NULL;
@@ -729,7 +757,6 @@ int WriteDir(Partition part, string path, string dirpath)
                 MyFile.read((char *)&bpadre, sup.s_block_s);
                 NewDir(bpadre.b_content[0].b_inodo, bpadre.b_content[0].b_name, token, 0, 0, path, part);
             }
-            token = strtok(NULL, "/");
         }
     }
     MyFile.close();
@@ -743,7 +770,7 @@ void FormatPartition(Partition part, string path, int n)
     SuperBloque sup;
     Journaling jn;
     Inodo in;
-    Bloque blo;
+    BloqueCarpetas blo;
     sup.s_inodes_count = n;
     sup.s_blocks_count = n * 3;
     sup.s_free_blocks_count = n * 3;
@@ -752,7 +779,7 @@ void FormatPartition(Partition part, string path, int n)
     sup.s_mnt_count = 1;
     sup.s_magic = 0xEF53;
     sup.s_inode_s = sizeof(struct Inodo);
-    sup.s_block_s = sizeof(struct Bloque);
+    sup.s_block_s = sizeof(BloqueCarpetas);
     sup.s_first_ino = 0;
     sup.s_first_blo = 0;
 
@@ -791,7 +818,7 @@ void FormatPartition(Partition part, string path, int n)
     sup.s_first_blo = 0;
     for (int j = 0; j < 3 * n; j++)
     {
-        MyFile.write((char *)&blo, sizeof(struct Bloque));
+        MyFile.write((char *)&blo, sizeof(BloqueCarpetas));
     }
     cout << MyFile.tellg();
     MyFile.seekp(part.part_start);
@@ -804,7 +831,7 @@ void FormatPartition(Partition part, string path, int n)
 }
 // err
 
-Inodo NewDr(int padre, string pname, string name, int uid, int gid, string path, Partition part)
+Inodo NewDir(int padre, string pname, string name, int uid, int gid, string path, Partition part)
 {
     Inodo inew;
     fstream MyFile;
@@ -836,11 +863,12 @@ Inodo NewDr(int padre, string pname, string name, int uid, int gid, string path,
     }
     MyFile.seekp(sup.s_inode_start + padre * sup.s_inode_s);
     MyFile.read((char *)&ipadre, sup.s_inode_s);
+    MyFile.seekp(sup.s_block_start + ipadre.i_block[0] * sup.s_block_s);
     MyFile.read((char *)&bpadre, sup.s_block_s);
     strcpy(bnew.b_content[0].b_name, name.c_str());
     bnew.b_content[0].b_inodo = sup.s_first_ino;
     bnew.b_content[1].b_inodo = padre;
-    strcpy(bnew.b_content[1].b_name, bpadre.b_content[0].b_name);
+    strcpy(bnew.b_content[1].b_name, pname.c_str());
     bool added = false;
     int fs = -1;
     for (int i = 0; i < 15; i++)
@@ -882,6 +910,8 @@ Inodo NewDr(int padre, string pname, string name, int uid, int gid, string path,
         nblock.b_content[0].b_inodo = bnew.b_content[0].b_inodo;
         strcpy(nblock.b_content[0].b_name, bnew.b_content[0].b_name);
         ipadre.i_block[fs] = sup.s_first_blo;
+        MyFile.seekp(sup.s_bm_block_start + sup.s_first_blo);
+        MyFile.write("1", sizeof(char));
         MyFile.seekp(sup.s_block_start + ipadre.i_block[fs] * sup.s_block_s);
         MyFile.write((char *)&nblock, sup.s_block_s);
         MyFile.seekp(sup.s_bm_block_start);
@@ -1025,7 +1055,7 @@ void MkDir(Inodo start, string dirpath, Partition part, string path)
         MyFile.read((char *)&blp, sup.s_block_s);
         char pn[100];
         strcpy(pn, adir.c_str());
-        nt = NewDir(blp.b_content[0].b_inodo, blp.b_content[0].b_name, pn, 0, 0, path, part);
+        nt = NewDir(blp.b_content[0].b_inodo, string(blp.b_content[0].b_name), adir, 0, 0, path, part);
         MkDir(nt, dirpath.substr(dirpath.find('/') + 1), part, path);
     }
 }
@@ -1248,7 +1278,7 @@ string addnodes(string path, Inodo in, SuperBloque sup)
     rep = rep + "<TABLE bgcolor=\"#84E1E6\">\n ";
     rep = rep + "   <TR>\n";
     rep = rep + "       <TD PORT=\"I";
-    rep = rep + to_string(blo.b_content[0].b_inodo);
+    rep = rep + to_string(0);
     rep = rep + "\">";
     rep = rep + "Inodo ";
     rep = rep + to_string(blo.b_content[0].b_inodo);
@@ -1304,6 +1334,8 @@ string addnodes(string path, Inodo in, SuperBloque sup)
                 rep = rep + to_string(in.i_block[i]);
                 rep = rep + "</TD>\n";
                 rep = rep + "   </TR>\n";
+                MyFile.seekp(sup.s_block_start + in.i_block[i] * sup.s_block_s);
+                MyFile.read((char *)&blo, sup.s_block_s);
                 for (int j = 0; j < 4; j++)
                 {
                     if (blo.b_content[j].b_inodo != -1)
@@ -1315,7 +1347,7 @@ string addnodes(string path, Inodo in, SuperBloque sup)
                         rep = rep + string(blo.b_content[j].b_name);
                         rep = rep + "</TD>\n";
                         rep = rep + "       <TD PORT=\"A";
-                        rep = rep + to_string(i);
+                        rep = rep + to_string(j);
                         rep = rep + "\">";
                         rep = rep + to_string(blo.b_content[j].b_inodo);
                         rep = rep + "</TD>\n";
@@ -1327,7 +1359,7 @@ string addnodes(string path, Inodo in, SuperBloque sup)
                                 Inodo next;
                                 MyFile.seekp(sup.s_inode_start + blo.b_content[j].b_inodo * sup.s_inode_s);
                                 MyFile.read((char *)&next, sup.s_inode_s);
-                                aux = addnodes(path, next, sup);
+                                aux += addnodes(path, next, sup);
                             }
                         }
                         else
@@ -1337,7 +1369,7 @@ string addnodes(string path, Inodo in, SuperBloque sup)
                                 Inodo next;
                                 MyFile.seekp(sup.s_inode_start + blo.b_content[j].b_inodo * sup.s_inode_s);
                                 MyFile.read((char *)&next, sup.s_inode_s);
-                                aux = addnodes(path, next, sup);
+                                aux += addnodes(path, next, sup);
                             }
                         }
                     }
@@ -1350,11 +1382,103 @@ string addnodes(string path, Inodo in, SuperBloque sup)
     return rep;
 }
 
+string addConections(string path, Inodo in, SuperBloque sup)
+{
+    fstream MyFile;
+    string rep;
+    BloqueCarpetas bp;
+    string aux;
+    MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try
+    {
+        MyFile.open(path, ios_base::binary | ios_base::out | ios_base::in);
+    }
+    catch (std::system_error &e)
+    {
+        std::clog << e.what() << " (" << e.code().value() << ")" << std::endl;
+    }
+    MyFile.seekp(sup.s_block_start + in.i_block[0] * sup.s_block_s);
+    MyFile.read((char *)&bp, sup.s_block_s);
+    int id = bp.b_content[0].b_inodo;
+    int pr = sizeof(BloqueCarpetas);
+    for (int i = 0; i < 16; i++)
+    {
+        if (in.i_block[i] != -1)
+        {
+            rep += "inodo";
+            rep += to_string(bp.b_content[0].b_inodo);
+            rep += ":";
+            rep += "A";
+            rep += to_string(i);
+            rep += " -> ";
+            rep += "bloquecarpeta";
+            rep += to_string(in.i_block[i]);
+            rep += ":";
+            rep += "B0";
+            rep += ";\n";
+            BloqueCarpetas ba;
+            MyFile.seekp(sup.s_block_start + in.i_block[i] * sup.s_block_s);
+            MyFile.read((char *)&ba, sup.s_block_s);
+            for (int j = 0; j < 4; j++)
+            {
+                if (ba.b_content[j].b_inodo != -1)
+                {
+                    if (i == 0)
+                    {
+                        if ((ba.b_content[j].b_inodo != id) && j > 1)
+                        {
+                            rep += "bloquecarpeta";
+                            rep += to_string(in.i_block[i]);
+                            rep += ":";
+                            rep += "A";
+                            rep += to_string(j);
+                            rep += " -> ";
+                            rep += "inodo";
+                            rep += to_string(ba.b_content[j].b_inodo);
+                            rep += ":";
+                            rep += "I0";
+                            rep += ";\n";
+                            Inodo next;
+                            MyFile.seekp(sup.s_inode_start + ba.b_content[j].b_inodo * sup.s_inode_s);
+                            MyFile.read((char *)&next, sup.s_inode_s);
+                            aux += addConections(path, next, sup);
+                        }
+                    }
+                    else if (ba.b_content[j].b_inodo != id)
+                    {
+                        rep += "bloquecarpeta";
+                        rep += to_string(in.i_block[i]);
+                        rep += ":";
+                        rep += "A";
+                        rep += to_string(j);
+                        rep += " -> ";
+                        rep += "inodo";
+                        rep += to_string(ba.b_content[j].b_inodo);
+                        rep += ":";
+                        rep += "I0";
+                        rep += ";\n";
+                        if ((ba.b_content[j].b_inodo != id))
+                        {
+                            Inodo next;
+                            MyFile.seekp(sup.s_inode_start + ba.b_content[j].b_inodo * sup.s_inode_s);
+                            MyFile.read((char *)&next, sup.s_inode_s);
+                            aux += addConections(path, next, sup);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    rep += aux;
+    return rep;
+}
+
 void ReportTree(string path, Partition part, SuperBloque sup)
 {
     fstream MyFile;
     string graph = "digraph tree {\n";
     Inodo root;
+    graph += "rankdir=\"LR\"\n";
     graph += "node[ shape = none, fontname = \"Arial\" ];\n";
     MyFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
@@ -1369,6 +1493,7 @@ void ReportTree(string path, Partition part, SuperBloque sup)
     MyFile.seekp(sup.s_inode_start);
     MyFile.read((char *)&root, sup.s_inode_s);
     graph += addnodes(path, root, sup);
+    graph += addConections(path, root, sup);
     graph += "}";
     ofstream Myfile("rept.dot");
 

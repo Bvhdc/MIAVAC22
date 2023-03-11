@@ -58,7 +58,7 @@ list<MountedDisks> mounted;
 int calcStructures(int size)
 {
     float i = 0;
-    i = (size - sizeof(struct SuperBloque)) / (1 + sizeof(Journaling) + 3 + sizeof(Inodo) + 3 * sizeof(Bloque));
+    i = (size - sizeof(struct SuperBloque)) / (1 + sizeof(Journaling) + 3 + sizeof(Inodo) + 3 * sizeof(BloqueCarpetas));
     int n = floor(i);
     return n;
 }
@@ -488,7 +488,7 @@ void comandos(char *comando)
                     token = strtok(NULL, " ");
 
                     auto match = std::find_if(mounted.cbegin(), mounted.cend(), [&token](const MountedDisks &s)
-                                              {
+                                            {
                         char *idp;
                         strcpy(idp,s.id.c_str());
                         return strcasecmp(idp,token)==0; });

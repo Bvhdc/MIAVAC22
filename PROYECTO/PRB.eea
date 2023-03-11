@@ -1,8 +1,9 @@
 mkdisk >path=./Disco1.dsk >size=5 >unit=M 
-fdisk >size=300 >path=./Disco1.dsk >name=Particion1
+fdisk >size=3000 >path=./Disco1.dsk >name=Particion1
 mount >path=./Disco1.dsk >name=Particion1
 mount
 mkfs >type=full >id=721Disco1
-mkdir >path=/home/misdocumentos/archivosdiciembre
-mkdir >path=/usr/misdocumentos/archivosdiciembre
+mkdir >path=/home/docs/arc
+mkdir >path=/usr/docs/arc
+mkdir >path=/rt/docs/arc
 rep

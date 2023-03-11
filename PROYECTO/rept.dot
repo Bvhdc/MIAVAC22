@@ -1,4 +1,5 @@
 digraph tree {
+rankdir="LR"
 node[ shape = none, fontname = "Arial" ];
 inodo0[label =<
 <TABLE bgcolor="#84E1E6">
@@ -11,7 +12,7 @@ inodo0[label =<
    </TR>
    <TR>
        <TD>Ap 1</TD>
-       <TD PORT="A1">-1</TD>
+       <TD PORT="A1">7</TD>
    </TR>
    <TR>
        <TD>Ap 2</TD>
@@ -65,21 +66,243 @@ bloquecarpeta0[label =<
    </TR>
    <TR>
        <TD>..</TD>
-       <TD PORT="A0">0</TD>
+       <TD PORT="A1">0</TD>
    </TR>
    <TR>
-       <TD>xome</TD>
+       <TD>home</TD>
+       <TD PORT="A2">1</TD>
+   </TR>
+   <TR>
+       <TD>usr</TD>
+       <TD PORT="A3">4</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta7[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 7</TD>
+   </TR>
+   <TR>
+       <TD>rt</TD>
+       <TD PORT="A0">7</TD>
+   </TR>
+</TABLE>>];
+inodo1[label =<
+<TABLE bgcolor="#84E1E6">
+    <TR>
+       <TD PORT="I0">Inodo 1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 0</TD>
        <TD PORT="A0">1</TD>
    </TR>
    <TR>
-       <TD>xsr</TD>
-       <TD PORT="A0">4</TD>
+       <TD>Ap 1</TD>
+       <TD PORT="A1">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 2</TD>
+       <TD PORT="A2">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 3</TD>
+       <TD PORT="A3">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 4</TD>
+       <TD PORT="A4">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 5</TD>
+       <TD PORT="A5">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 6</TD>
+       <TD PORT="A6">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 7</TD>
+       <TD PORT="A7">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 8</TD>
+       <TD PORT="A8">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 9</TD>
+       <TD PORT="A9">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 10</TD>
+       <TD PORT="A10">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 11</TD>
+       <TD PORT="A11">-1</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta1[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 1</TD>
+   </TR>
+   <TR>
+       <TD>home</TD>
+       <TD PORT="A0">1</TD>
+   </TR>
+   <TR>
+       <TD>.</TD>
+       <TD PORT="A1">0</TD>
+   </TR>
+   <TR>
+       <TD>docs</TD>
+       <TD PORT="A2">2</TD>
+   </TR>
+</TABLE>>];
+inodo2[label =<
+<TABLE bgcolor="#84E1E6">
+    <TR>
+       <TD PORT="I0">Inodo 2</TD>
+   </TR>
+   <TR>
+       <TD>Ap 0</TD>
+       <TD PORT="A0">2</TD>
+   </TR>
+   <TR>
+       <TD>Ap 1</TD>
+       <TD PORT="A1">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 2</TD>
+       <TD PORT="A2">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 3</TD>
+       <TD PORT="A3">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 4</TD>
+       <TD PORT="A4">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 5</TD>
+       <TD PORT="A5">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 6</TD>
+       <TD PORT="A6">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 7</TD>
+       <TD PORT="A7">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 8</TD>
+       <TD PORT="A8">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 9</TD>
+       <TD PORT="A9">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 10</TD>
+       <TD PORT="A10">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 11</TD>
+       <TD PORT="A11">-1</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta2[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 2</TD>
+   </TR>
+   <TR>
+       <TD>docs</TD>
+       <TD PORT="A0">2</TD>
+   </TR>
+   <TR>
+       <TD>home</TD>
+       <TD PORT="A1">1</TD>
+   </TR>
+   <TR>
+       <TD>arc</TD>
+       <TD PORT="A2">3</TD>
+   </TR>
+</TABLE>>];
+inodo3[label =<
+<TABLE bgcolor="#84E1E6">
+    <TR>
+       <TD PORT="I0">Inodo 3</TD>
+   </TR>
+   <TR>
+       <TD>Ap 0</TD>
+       <TD PORT="A0">3</TD>
+   </TR>
+   <TR>
+       <TD>Ap 1</TD>
+       <TD PORT="A1">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 2</TD>
+       <TD PORT="A2">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 3</TD>
+       <TD PORT="A3">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 4</TD>
+       <TD PORT="A4">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 5</TD>
+       <TD PORT="A5">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 6</TD>
+       <TD PORT="A6">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 7</TD>
+       <TD PORT="A7">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 8</TD>
+       <TD PORT="A8">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 9</TD>
+       <TD PORT="A9">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 10</TD>
+       <TD PORT="A10">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 11</TD>
+       <TD PORT="A11">-1</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta3[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 3</TD>
+   </TR>
+   <TR>
+       <TD>arc</TD>
+       <TD PORT="A0">3</TD>
+   </TR>
+   <TR>
+       <TD>docs</TD>
+       <TD PORT="A1">2</TD>
    </TR>
 </TABLE>>];
 inodo4[label =<
 <TABLE bgcolor="#84E1E6">
     <TR>
-       <TD PORT="I4">Inodo 4</TD>
+       <TD PORT="I0">Inodo 4</TD>
    </TR>
    <TR>
        <TD>Ap 0</TD>
@@ -136,22 +359,22 @@ bloquecarpeta4[label =<
        <TD PORT="B0">Bloque Carpeta 4</TD>
    </TR>
    <TR>
-       <TD>xsr</TD>
+       <TD>usr</TD>
        <TD PORT="A0">4</TD>
    </TR>
    <TR>
-       <TD></TD>
-       <TD PORT="A0">0</TD>
+       <TD>.</TD>
+       <TD PORT="A1">0</TD>
    </TR>
    <TR>
-       <TD>Tisdocumento</TD>
-       <TD PORT="A0">5</TD>
+       <TD>docs</TD>
+       <TD PORT="A2">5</TD>
    </TR>
 </TABLE>>];
 inodo5[label =<
 <TABLE bgcolor="#84E1E6">
     <TR>
-       <TD PORT="I5">Inodo 5</TD>
+       <TD PORT="I0">Inodo 5</TD>
    </TR>
    <TR>
        <TD>Ap 0</TD>
@@ -208,22 +431,22 @@ bloquecarpeta5[label =<
        <TD PORT="B0">Bloque Carpeta 5</TD>
    </TR>
    <TR>
-       <TD>Tisdocumento</TD>
+       <TD>docs</TD>
        <TD PORT="A0">5</TD>
    </TR>
    <TR>
-       <TD>xÍÿÿÿ</TD>
-       <TD PORT="A0">4</TD>
+       <TD>usr</TD>
+       <TD PORT="A1">4</TD>
    </TR>
    <TR>
-       <TD>•rchivosdici</TD>
-       <TD PORT="A0">6</TD>
+       <TD>arc</TD>
+       <TD PORT="A2">6</TD>
    </TR>
 </TABLE>>];
 inodo6[label =<
 <TABLE bgcolor="#84E1E6">
     <TR>
-       <TD PORT="I6">Inodo 6</TD>
+       <TD PORT="I0">Inodo 6</TD>
    </TR>
    <TR>
        <TD>Ap 0</TD>
@@ -280,12 +503,244 @@ bloquecarpeta6[label =<
        <TD PORT="B0">Bloque Carpeta 6</TD>
    </TR>
    <TR>
-       <TD>•rchivosdici</TD>
+       <TD>arc</TD>
        <TD PORT="A0">6</TD>
    </TR>
    <TR>
-       <TD>xÍÿÿÿ</TD>
-       <TD PORT="A0">5</TD>
+       <TD>docs</TD>
+       <TD PORT="A1">5</TD>
    </TR>
 </TABLE>>];
+inodo7[label =<
+<TABLE bgcolor="#84E1E6">
+    <TR>
+       <TD PORT="I0">Inodo 7</TD>
+   </TR>
+   <TR>
+       <TD>Ap 0</TD>
+       <TD PORT="A0">8</TD>
+   </TR>
+   <TR>
+       <TD>Ap 1</TD>
+       <TD PORT="A1">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 2</TD>
+       <TD PORT="A2">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 3</TD>
+       <TD PORT="A3">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 4</TD>
+       <TD PORT="A4">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 5</TD>
+       <TD PORT="A5">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 6</TD>
+       <TD PORT="A6">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 7</TD>
+       <TD PORT="A7">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 8</TD>
+       <TD PORT="A8">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 9</TD>
+       <TD PORT="A9">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 10</TD>
+       <TD PORT="A10">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 11</TD>
+       <TD PORT="A11">-1</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta8[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 8</TD>
+   </TR>
+   <TR>
+       <TD>rt</TD>
+       <TD PORT="A0">7</TD>
+   </TR>
+   <TR>
+       <TD>.</TD>
+       <TD PORT="A1">0</TD>
+   </TR>
+   <TR>
+       <TD>docs</TD>
+       <TD PORT="A2">8</TD>
+   </TR>
+</TABLE>>];
+inodo8[label =<
+<TABLE bgcolor="#84E1E6">
+    <TR>
+       <TD PORT="I0">Inodo 8</TD>
+   </TR>
+   <TR>
+       <TD>Ap 0</TD>
+       <TD PORT="A0">9</TD>
+   </TR>
+   <TR>
+       <TD>Ap 1</TD>
+       <TD PORT="A1">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 2</TD>
+       <TD PORT="A2">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 3</TD>
+       <TD PORT="A3">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 4</TD>
+       <TD PORT="A4">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 5</TD>
+       <TD PORT="A5">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 6</TD>
+       <TD PORT="A6">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 7</TD>
+       <TD PORT="A7">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 8</TD>
+       <TD PORT="A8">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 9</TD>
+       <TD PORT="A9">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 10</TD>
+       <TD PORT="A10">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 11</TD>
+       <TD PORT="A11">-1</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta9[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 9</TD>
+   </TR>
+   <TR>
+       <TD>docs</TD>
+       <TD PORT="A0">8</TD>
+   </TR>
+   <TR>
+       <TD>rt</TD>
+       <TD PORT="A1">7</TD>
+   </TR>
+   <TR>
+       <TD>arc</TD>
+       <TD PORT="A2">9</TD>
+   </TR>
+</TABLE>>];
+inodo9[label =<
+<TABLE bgcolor="#84E1E6">
+    <TR>
+       <TD PORT="I0">Inodo 9</TD>
+   </TR>
+   <TR>
+       <TD>Ap 0</TD>
+       <TD PORT="A0">10</TD>
+   </TR>
+   <TR>
+       <TD>Ap 1</TD>
+       <TD PORT="A1">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 2</TD>
+       <TD PORT="A2">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 3</TD>
+       <TD PORT="A3">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 4</TD>
+       <TD PORT="A4">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 5</TD>
+       <TD PORT="A5">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 6</TD>
+       <TD PORT="A6">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 7</TD>
+       <TD PORT="A7">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 8</TD>
+       <TD PORT="A8">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 9</TD>
+       <TD PORT="A9">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 10</TD>
+       <TD PORT="A10">-1</TD>
+   </TR>
+   <TR>
+       <TD>Ap 11</TD>
+       <TD PORT="A11">-1</TD>
+   </TR>
+</TABLE>>];
+bloquecarpeta10[label =<
+<TABLE bgcolor="#E85240">
+    <TR>
+       <TD PORT="B0">Bloque Carpeta 10</TD>
+   </TR>
+   <TR>
+       <TD>arc</TD>
+       <TD PORT="A0">9</TD>
+   </TR>
+   <TR>
+       <TD>docs</TD>
+       <TD PORT="A1">8</TD>
+   </TR>
+</TABLE>>];
+inodo0:A0 -> bloquecarpeta0:B0;
+bloquecarpeta0:A2 -> inodo1:I0;
+bloquecarpeta0:A3 -> inodo4:I0;
+inodo0:A1 -> bloquecarpeta7:B0;
+bloquecarpeta7:A0 -> inodo7:I0;
+inodo1:A0 -> bloquecarpeta1:B0;
+bloquecarpeta1:A2 -> inodo2:I0;
+inodo2:A0 -> bloquecarpeta2:B0;
+bloquecarpeta2:A2 -> inodo3:I0;
+inodo3:A0 -> bloquecarpeta3:B0;
+inodo4:A0 -> bloquecarpeta4:B0;
+bloquecarpeta4:A2 -> inodo5:I0;
+inodo5:A0 -> bloquecarpeta5:B0;
+bloquecarpeta5:A2 -> inodo6:I0;
+inodo6:A0 -> bloquecarpeta6:B0;
+inodo7:A0 -> bloquecarpeta8:B0;
+bloquecarpeta8:A2 -> inodo8:I0;
+inodo8:A0 -> bloquecarpeta9:B0;
+bloquecarpeta9:A2 -> inodo9:I0;
+inodo9:A0 -> bloquecarpeta10:B0;
 }
